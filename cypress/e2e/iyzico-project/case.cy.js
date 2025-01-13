@@ -7,18 +7,24 @@ import payPage from "../../pageObjectModel/payPage";
 import ThreeDConfirmationPage from "../../pageObjectModel/ThreeDConfirmationPage";
 import { slowCypressDown } from "cypress-slow-down";
 
-//
+//Sayfa çok hızlı olduğundan bazı adımlar bazen error veriyordu, bu yüzden slowdown ekledim.
 slowCypressDown()
 describe('Test Automation Case Study', () => {
 
+    //Bu case özelinde tek case olduğu için tek before kullandım. Farklı caseler geldiginde beforeeach de kullanılabilir tabi.
     before(() => {
+        //Sayfada sayfanın yüklenmesi bazen error veriyordu,hata kod yada cypress kaynaklı değildi bu yüzden hatayı bulamadım, bu yüzden böyle bir satır ekledim hatayı bypass etmek için.
         Cypress.once('uncaught:exception', () => false)
+        //Kredi kartı bilgilerini fixture kullanarak almak istedim.
         cy.fixture("cardData").as('cardInfos')
         cy.step('Go to main page')
+        //domain adresini configde tutuyorum.
         cy.visit("demo")
         cy.log(cy.title())
     });
     it('Add Product Case', () => {
+        //aksiyon aldığım stepleri step olarak ekledim, assertionları step olarak eklemedim, aksiyonun bir sonucu olduğu için birlikte görmek istedim.
+        //assertionlar icin be.visible ya da have.text kullandım.
         cy.step('Click second product')
         mainPage.secondProduct.should('be.visible').click()
         
@@ -48,6 +54,7 @@ describe('Test Automation Case Study', () => {
         cy.step('Click Pay with Card')
         payPage.payButton.should('be.visible').click()
 
+        //kod hep aynı olduğu için bu projede direkt yazdım kodu
         cy.step('Fill SMS Code')
         ThreeDConfirmationPage.smsCode.should('be.visible').type('283126')
         cy.step('Click SMS Code Submit Button')
@@ -58,6 +65,5 @@ describe('Test Automation Case Study', () => {
             expect(text).to.equal('Sipariş alındı');
             cy.log('Page title is: ' + text); 
         })
-    
     });
 });
